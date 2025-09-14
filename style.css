@@ -1,0 +1,494 @@
+/* === Palette === */
+:root{
+    --bg:#fdfbf7;
+    --beige-light:#f7f2eb;
+    --beige:#e0d6c9;
+    --brown:#5a4634;
+    --muted:#8a7663;
+    --gold-light:#fbe9b5;
+    --gold:#d4af37;
+    --gold-dark:#a67c00;
+    --line:#eadfd7;
+    --shadow:0 10px 30px rgba(90,70,52,.08);
+    --radius:16px;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; }
+  body{
+    margin:0; color:var(--brown);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    background:
+      radial-gradient(100% 80% at 20% 10%, rgba(247,242,235,.7) 0%, transparent 60%),
+      radial-gradient(70% 60% at 90% 0%, rgba(232,223,211,.6) 0%, transparent 70%),
+      var(--bg);
+  }
+  .wrap{ max-width:980px; margin:0 auto; padding:20px; }
+  
+  /* Header / Landing */
+  body.smart .sw-nav{
+    position:relative; top:20px; width:70%; margin:0 auto;
+    background:var(--beige); border:1px solid var(--line);
+    border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,.08);
+  }
+  body.smart .sw-wrap--nav{ width:100%; padding:12px 20px; display:flex; justify-content:center; }
+  body.smart .sw-brand{ display:flex; align-items:center; gap:8px; font-family:"Playfair Display", serif; font-weight:600; font-size:20px; }
+  body.smart .sw-star{ font-size:26px; color:var(--gold); transform:translateY(2px); }
+  body.smart .sw-logo{ letter-spacing:.5px; color:var(--brown); }
+  
+  body.smart .sw-hero{ padding:56px 0 24px; text-align:center; }
+  .couple-names{ font-family:"Playfair Display", serif; font-weight:700; font-size:48px; margin:12px 0; color:var(--brown); }
+  .couple-names .ampersand {
+    background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+    background-clip: text;          /* Standard property */
+    -webkit-background-clip: text;  /* Safari/Chrome */
+    -webkit-text-fill-color: transparent;
+    color: transparent;             /* Fallback for browsers without support */
+    text-shadow: 0 2px 6px rgba(212,175,55,.4);
+  }
+  .sw-cta{ display:flex; gap:10px; justify-content:center; margin:18px 0 10px; }
+  .sw-btn{ display:inline-flex; align-items:center; justify-content:center; padding:12px 20px; border-radius:999px; border:1px solid #efd9ba; background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--gold-dark)); color:#fff; font-weight:600; box-shadow:0 4px 12px rgba(212,175,55,.4); text-decoration:none; }
+  .sw-btn--outline{ background:#fff; color:var(--brown); border:1px solid var(--line); box-shadow:none; }
+
+  .sw-hero .sw-eyebrow {
+    font-family: "Playfair Display", serif;
+    font-weight: 600;
+    font-size: 28px;
+    color: var(--brown);
+    margin: 8px 0 20px 0;
+    letter-spacing: 0.5px;
+  }
+
+  .sw-footer{
+    background:var(--beige); color:var(--brown);
+    width:60%; margin:40px auto 20px; padding:16px 20px;
+    text-align:center; border:1px solid var(--line); border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,.08);
+  }
+  .footer-star{ color:var(--gold); }
+  
+  /* Cards / Sections */
+  .card{ border:1px solid var(--line); background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); }
+  .card.pink{ background:linear-gradient(180deg,#fff 0%, var(--beige-light) 100%); }
+  .section{ padding:16px 16px 14px; border-bottom:1px solid var(--line); }
+  .section:last-child{ border-bottom:none; }
+  .subtitle{ margin:0 0 6px; color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.12em; }
+  .title{ margin:0; font-size:20px; }
+  .stack{ display:flex; flex-direction:column; gap:12px; }
+  
+  .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  button,.btn{ appearance:none; border:none; cursor:pointer; font-weight:700; padding:12px 16px; border-radius:12px; }
+  .btn {
+    background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+    color: #fff;
+    border: 1px solid var(--gold-dark);
+    box-shadow: 0 4px 12px rgba(212,175,55,.35);
+  
+    /* 🔑 Make them bigger */
+    font-size: 16px;         /* slightly larger text */
+    padding: 14px 24px;      /* more padding inside */
+    border-radius: 12px;
+  
+    width: 70%;              /* align with file-btn proportions */
+    max-width: 180px;        /* increase max width */
+    font-weight: 600;
+    cursor: pointer;
+    transition: box-shadow 0.2s ease;
+  }
+
+  .btn.secondary {
+    background: #fff;
+    color: var(--brown);
+    border: 1px solid var(--line);
+    box-shadow: none;
+  
+    /* 🔑 Same scaling */
+    font-size: 16px;
+    padding: 14px 24px;
+    border-radius: 12px;
+  
+    width: 50%;
+    max-width: 160px;
+  }
+
+  button[disabled]{ opacity:.6; cursor:not-allowed; }
+  .status{ min-height:18px; color:var(--muted); }
+  
+  /* Gallery grid */
+  .masonry{ display:grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap:10px; }
+  .tile{ position:relative; overflow:hidden; border-radius:12px; background:var(--beige-light); border:1px solid var(--line); }
+  .masonry img,.masonry video{ display:block; width:100%; height:180px; object-fit:cover; background:#000; }
+  .empty{ text-align:center; padding:28px 16px; color:var(--muted); }
+  
+  /* Stylish file button */
+  .file-btn {
+    display: inline-block;
+    background: #4b3621;        /* chocolate brown */
+    color: #f5f0e6;      /* beige text */
+    font-size: 16px;
+    font-weight: 600;
+    padding: 14px 22px;
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s, transform 0.1s;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    width: 100%;                /* full width on small screens */
+    max-width: 280px;           /* not too wide on desktop */
+  }
+
+  .file-btn:hover {
+    background: #3b2a17;              /* slightly darker brown */
+  }
+
+  .file-btn:active {
+    transform: scale(0.8);
+  }
+
+  /* Utility */
+.hidden { display: none !important; }
+
+/* Login card */
+.login-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding:16px;
+}
+
+.sw-login{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  justify-content:flex-start;   /* set to center if you prefer */
+  flex-wrap:wrap;               /* keeps it nice on phones */
+}
+
+.sw-input{
+  height:46px;
+  padding:0 14px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  font-size:16px;
+  min-width:240px;              /* good visual size */
+  outline:none;
+}
+.sw-input:focus{
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(212,175,55,.18);
+}
+
+/* Gold buttons for dashboard */
+.sw-btn-gold{
+  background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+  color:#fff;
+  border:1px solid var(--gold-dark);
+  border-radius:12px;
+  padding:12px 24px;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow: 0 6px 14px rgba(212,175,55,.35);
+  transition: box-shadow .2s ease;
+}
+.sw-btn-gold:hover{ box-shadow: 0 8px 18px rgba(212,175,55,.45); }
+
+.sw-btn-gold-outline{
+  background:#fff;
+  color:var(--brown);
+  border:1px solid var(--gold);
+  border-radius:12px;
+  padding:10px 16px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+/* Apply same look to file input label */
+label.sw-btn-gold {
+  cursor: pointer;
+}
+
+/* Login feedback */
+.login-msg{
+  margin-top:8px;
+  font-size:14px;
+  color: var(--muted);
+}
+
+/* Spacing adjustments for dashboard gallery header */
+.gallery-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;   /* more space below the whole header */
+  padding-bottom: 10px;  /* extra breathing room */
+  border-bottom: 1px solid var(--line); /* subtle separator */
+}
+
+.section.gallery-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;                 /* space between left group and button */
+  padding: 14px 16px 14px;   /* inner breathing room */
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 16px;       /* space below header */
+}
+
+.gh-left {                   /* the left stack (subtitle + title) */
+  display: flex;
+  flex-direction: column;
+}
+
+.gh-left .subtitle {
+  margin: 0 0 8px 0;         /* spacing between “Gallery” and h2 */
+  letter-spacing: 0.12em;
+}
+
+.gh-left .title {
+  margin: 0;                 /* remove default h2 margin */
+}
+
+/* Download-all button: single-line, centered */
+button#dlAll.sw-btn-gold{
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;    /* never wrap */
+  line-height: 1 !important;         /* perfect vertical centering */
+  padding: 12px 24px !important;     /* balanced padding */
+  font-size: 15px !important;
+  min-width: 150px;                   /* avoids accidental wrap on tight layouts */
+  height: 36px;                       /* optional: consistent height */
+}
+
+#dlAllWrap {
+  align-self: center; /* aligns nicely in the header */
+  margin-left: auto;
+}
+
+/* Download-all wrapper hidden by default */
+.hidden {
+  display: none !important;
+}
+
+/* bar under each tile (no filename, just an icon) */
+.tile-bar{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  padding:6px 8px;
+  background:#fff;
+  border-top:1px solid var(--line);
+}
+
+/* minimalist icon button */
+.icon-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:32px;
+  height:32px;
+  border-radius:8px;
+  color: var(--brown);
+  text-decoration:none;
+  transition: background-color .15s ease, transform .05s ease;
+}
+.icon-btn:hover{ background: var(--beige-light); }
+.icon-btn:active{ transform: translateY(1px); }
+.icon-btn svg{ display:block; }
+#hwDlFrame { display:none; width:0; height:0; border:0; }
+
+/* Stack CTAs (Weddingram on top, Private below) */
+.sw-cta.sw-cta--stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Instagram-like gradient button */
+.sw-btn-ig {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  border-radius: 999px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  border: 1px solid rgba(0,0,0,.08);
+  box-shadow: 0 6px 16px rgba(0,0,0,.12);
+  background: radial-gradient(120% 120% at 30% 10%,
+    #ffd86f 0%, #ff0069 35%, #b400ff 70%, #4c3aff 100%);
+}
+.sw-btn-ig:hover { filter: brightness(1.03); }
+
+/* Weddingram grid: square, IG-like */
+.wg-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+@media (max-width: 720px){
+  .wg-grid{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 420px){
+  .wg-grid{ grid-template-columns: 1fr 1fr; } /* 2 col on small phones */
+}
+.wg-tile{
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;     /* perfect square */
+  overflow: hidden;
+  border-radius: 10px;
+  background: #000;
+}
+.wg-tile img,
+.wg-tile video{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;       /* IG-style crop */
+  display: block;
+}
+/* Weddingram forms */
+.wg-posts{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 680px){
+  .wg-posts{ grid-template-columns: 1fr; }
+}
+.wg-form{
+  border:1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+}
+.wg-form-title{
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  color: var(--brown);
+}
+#wgPhoto { display:block; margin: 6px 0 8px; }
+#wgCaption, #wgMessage{
+  width: 100%;
+  border:1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  outline: none;
+}
+#wgCaption:focus, #wgMessage:focus{
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(212,175,55,.18);
+}
+.wg-status{ margin-top: 8px; color: var(--muted); font-size: 13px; }
+
+/* Weddingram grid (IG-like squares) */
+.wg-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+@media (max-width: 720px){ .wg-grid{ grid-template-columns: repeat(2, 1fr);} }
+@media (max-width: 420px){ .wg-grid{ grid-template-columns: 1fr 1fr;} }
+
+.wg-tile{
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #000;
+  display:flex; align-items:center; justify-content:center;
+}
+.wg-tile img, .wg-tile video{
+  width: 100%; height: 100%; object-fit: cover; display:block;
+}
+.wg-tile.wg-text{
+  background: linear-gradient(180deg, #fff, var(--beige-light));
+  border: 1px solid var(--line);
+  color: var(--brown);
+  padding: 12px;
+  align-items: flex-start; justify-content: flex-start;
+}
+.wg-tile.wg-text p{
+  margin: 0; font-size: 14px; line-height: 1.4;
+}
+
+/* Optional caption overlay for photos */
+.wg-cap{
+  position:absolute; left:0; right:0; bottom:0;
+  background: linear-gradient(transparent, rgba(0,0,0,.55));
+  color:#fff; padding: 8px 10px; font-size: 13px;
+}
+
+/* Styled choose file button (Weddingram) */
+.file-btn {
+  display: inline-block;
+  background: var(--brown);
+  color: var(--beige-light);
+  font-size: 16px;
+  font-weight: 600;
+  padding: 14px 22px;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.2s, transform 0.1s;
+  border: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 280px;
+}
+.file-btn:hover { background: #3b2a17; }
+.file-btn:active { transform: scale(0.95); }
+
+/* Caption + message inputs */
+#wgCaption, #wgMessage {
+  margin-top: 12px;
+  resize: vertical;
+  min-height: 60px;
+}
+
+/* ---- Weddingram: single-column centered feed ---- */
+.wg-grid{
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 24px !important;
+}
+
+.wg-tile{
+  width: 100%;
+  max-width: 560px;               /* nice centered width */
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.wg-tile img{
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.wg-cap{
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--brown);
+  border-top: 1px solid var(--line);
+}
+
+.wg-text{
+  padding: 20px;
+  font-size: 16px;
+  color: var(--brown);
+  text-align: center;
+}
+
+/* hide helper */
+.hidden { display: none !important; }

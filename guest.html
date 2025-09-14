@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="star.svg" />
+  <title>HappyWeds</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="js/config.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Share your moments</h1>
+    </header>
+
+    <div class="card pink">
+      <div class="section">
+        <p class="subtitle">Upload</p>
+        <h2 class="title">Add photos and/or short videos</h2>
+      </div>
+
+      <div class="section">
+        <form id="uploadForm" class="stack"
+              action="" method="POST" enctype="multipart/form-data" target="hiddenFrame">
+          <input id="picker" type="file" name="files[]" accept="image/*,video/*" multiple hidden capture/>
+          <label for="picker" class="file-btn">📷 Choose photos / videos</label>
+          <small class="note" id="chosenText" aria-live="polite">No files selected yet.</small>
+          <div class="row">
+            <button class="btn" type="submit" disabled>Upload</button>
+            <button class="btn secondary" type="button" id="resetBtn">Reset</button>
+          </div>
+          <div id="status" class="status" aria-live="polite"></div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section">
+        <p class="subtitle">What happens next?</p>
+        <p>Your artistic shots go to a secure folder. The couple can enjoy and save them anytime from their own private gallery.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/guest.js"></script>
+</body>
+</html>

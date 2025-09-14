@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="star.svg" />
+  <title>Weddingram</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="js/config.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <header class="card" style="padding:14px 16px;">
+      <div class="gallery-head">
+        <div>
+          <p class="subtitle">Weddingram</p>
+          <h2 class="title">Public feed</h2>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post boxes -->
+    <section class="card">
+      <div class="section">
+        <div class="wg-posts">
+          <!-- Photo + caption -->
+            <form id="wgPhotoForm" class="wg-form" enctype="multipart/form-data">
+                <h3 class="wg-form-title">Share a photo</h3>
+            
+                <!-- Hide native input, style the label -->
+                <input id="wgPhoto" type="file" name="file" accept="image/*,video/*" hidden />
+                <label for="wgPhoto" class="sw-btn-gold">📸 Choose a photo / video</label>
+            
+                <!-- Caption stays hidden until a file is chosen -->
+                <input id="wgCaption" type="text" maxlength="2200" placeholder="Caption (optional)" class="hidden" />
+            
+                <button class="sw-btn-gold" type="submit">Upload</button>
+                <div class="wg-status" id="wgPhotoStatus"></div>
+            </form>
+
+          <!-- Text message only -->
+          <div class="wg-form">
+            <h3 class="wg-form-title">Say something</h3>
+            <button id="showMsgBtn" class="sw-btn secondary" type="button">💌 Post a message</button>
+            
+            <!-- Message form hidden until button pressed -->
+            <form id="wgTextForm" class="stack hidden">
+              <textarea id="wgMessage" class="sw-input" rows="3" maxlength="2200" placeholder="Your message…"></textarea>
+              <button class="sw-btn" type="submit">Share message</button>
+              <div class="wg-status" id="wgTextStatus"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feed -->
+    <section class="card">
+      <div class="section">
+        <div id="wgGrid" class="wg-grid"></div>
+        <div id="wgEmpty" class="empty" style="display:none;">No posts yet.</div>
+      </div>
+    </section>
+  </div>
+
+  <script src="js/weddingram.js"></script>
+</body>
+</html>

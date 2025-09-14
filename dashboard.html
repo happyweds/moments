@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="star.svg" />
+  <title>HappyWeds</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="js/config.js"></script>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- GALLERY HEADER -->
+    <div class="card">
+      <div class="section gallery-head">
+        <div class="gh-left">
+          <p class="subtitle">Gallery</p>
+          <h2 class="title">Guests uploads</h2>
+        </div>
+
+        <!-- Hide “Download all” until logged in -->
+        <div id="dlAllWrap" class="hidden">
+          <button id="dlAll" class="btn sw-btn-gold"><span style="display:inline">Download all</span></button>
+        </div>
+      </div>
+
+      <!-- LOGIN CARD -->
+      <div id="loginSection" class="section">
+        <div class="login-card">
+          <form class="sw-login" onsubmit="return false;">
+            <input id="pwd" type="password" class="sw-input" placeholder="Password" autocomplete="current-password" />
+            <button id="loginBtn" class="sw-btn-gold" type="button">Enter</button>
+          </form>
+          <div id="loginMsg" class="login-msg" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- GALLERY SECTION (hidden until login) -->
+      <div id="gallerySection" class="section hidden">
+        <div id="grid" class="masonry"></div>
+        <div id="empty" class="empty" aria-live="polite">📷 No uploads yet — be the first!</div>
+      </div>
+    </div>
+
+  </div>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
