@@ -1,29 +1,25 @@
-// weddingram.js — Weddingram feed (single-column + better form toggling)
+// weddingram.js — Weddingram feed (CORS-proof submits)
 (function () {
   var cfg = window.HW_CONFIG || {};
   var WEB_APP = cfg.WEB_APP_URL || '';
   if (!WEB_APP) { console.error('[weddingram] Missing WEB_APP_URL'); return; }
 
-  // Feed
   var grid  = document.getElementById('wgGrid');
   var empty = document.getElementById('wgEmpty');
 
-  // Photo form
   var photoForm   = document.getElementById('wgPhotoForm');
   var photoInput  = document.getElementById('wgPhoto');
   var captionIn   = document.getElementById('wgCaption');
   var photoStatus = document.getElementById('wgPhotoStatus');
 
-  // Text form
   var textForm    = document.getElementById('wgTextForm');
   var msgIn       = document.getElementById('wgMessage');
   var textStatus  = document.getElementById('wgTextStatus');
-  var showMsgBtn  = document.getElementById('wgShowMsg'); // "Post a message" gold button
+  var showMsgBtn  = document.getElementById('wgShowMsg');
 
-  // Small helper
   function setText(el, msg){ if (el) el.textContent = msg || ''; }
 
-  // JSONP (for list)
+  // JSONP list (no CORS)
   function jsonp(url, cb){
     var name = 'wg_cb_' + Math.random().toString(36).slice(2);
     window[name] = function(data){ try{ cb(data); } finally{ delete window[name]; } };
@@ -33,29 +29,16 @@
     document.body.appendChild(s);
   }
 
-  // Drive preview helpers
-  function asPreviewUrlFromContent(link){
-    // Converts ...uc?export=download&id=XYZ to ...uc?export=view&id=XYZ
-    if (!link) return '';
-    var m = link.match(/[?&]id=([^&]+)/);
-    if (m) return 'https://drive.google.com/uc?export=view&id=' + decodeURIComponent(m[1]);
-    return link;
-  }
-  function previewSrc(entry){
-    // Prefer backend-provided fields from your updated Apps Script
-    // For images: use thumbnailLink (fast, static), else viewLink
-    if (entry.type === 'photo') {
-      return entry.thumbnailLink || entry.viewLink || asPreviewUrlFromContent(entry.webContentLink);
+  function drivePreviewUrl(entry){
+    if (entry && entry.fileId) return 'https://drive.google.com/uc?export=view&id=' + entry.fileId;
+    if (entry && entry.webContentLink) {
+      var m = entry.webContentLink.match(/[?&]id=([^&]+)/);
+      if (m) return 'https://drive.google.com/uc?export=view&id=' + decodeURIComponent(m[1]);
+      return entry.webContentLink;
     }
-    // For videos: use viewLink (streamable)
-    if (entry.type === 'video') {
-      return entry.viewLink || asPreviewUrlFromContent(entry.webContentLink);
-    }
-    // Fallbacks
-    return entry.viewLink || asPreviewUrlFromContent(entry.webContentLink) || '';
+    return (entry && (entry.url || entry.link)) || '';
   }
 
-  // Render feed (single column)
   function render(items){
     grid.innerHTML = '';
     var list = Array.isArray(items) ? items : [];
@@ -66,16 +49,9 @@
       var tile = document.createElement('div');
       tile.className = 'wg-tile';
 
-      // normalize type based on mimeType if present
-      var t = entry.type || '';
-      if (!t && entry.mimeType) {
-        t = entry.mimeType.indexOf('video/') === 0 ? 'video'
-          : entry.mimeType.indexOf('image/') === 0 ? 'photo' : 'text';
-      }
-
-      if (t === 'photo') {
+      if (entry.type === 'photo'){
         var img = document.createElement('img');
-        img.src = previewSrc(entry);
+        img.src = entry.thumbnailLink || drivePreviewUrl(entry);
         img.alt = 'Photo';
         img.loading = 'lazy';
         img.referrerPolicy = 'no-referrer';
@@ -87,85 +63,45 @@
           cap.textContent = entry.caption;
           tile.appendChild(cap);
         }
-      }
-      else if (t === 'video') {
-        var v = document.createElement('video');
-        v.src = previewSrc(entry);
-        v.controls = true;
-        v.preload = 'metadata';
-        v.style.maxWidth = '100%';
-        v.style.maxHeight = '100%';
-        tile.appendChild(v);
-
-        if (entry.caption){
-          var cap2 = document.createElement('div');
-          cap2.className = 'wg-cap';
-          cap2.textContent = entry.caption;
-          tile.appendChild(cap2);
-        }
-      }
-      else if (t === 'text') {
+      } else if (entry.type === 'text'){
         tile.classList.add('wg-text');
         var p = document.createElement('p');
         p.textContent = entry.caption || '';
         tile.appendChild(p);
       }
-
       grid.appendChild(tile);
     });
   }
 
   function loadFeed(){
     jsonp(WEB_APP + '?action=wg_list&ts=' + Date.now(), function(res){
-      if (!res) {
-        empty.style.display = 'block'; setText(empty, 'Could not load posts.'); return;
-      }
-      if (Array.isArray(res)) {
-        render(res); return;
-      }
-      if (Array.isArray(res.items)) {
-        render(res.items); return;
-      }
-      if (res.error || res._error) {
-        empty.style.display = 'block'; setText(empty, 'Could not load posts.'); return;
-      }
-      // Fallback: try to render what we got
-      render(res);
+      if (!res || res.error || res._error) { empty.style.display='block'; setText(empty,'Could not load posts.'); return; }
+      if (Array.isArray(res)) render(res); else if (Array.isArray(res.items)) render(res.items); else render(res);
     });
   }
 
-  // ---- UI toggles ----
-
-  // Show caption only after a file is picked
+  // UI toggles
   if (captionIn && photoInput) {
-    captionIn.classList.add('hidden'); // hidden on load
+    captionIn.classList.add('hidden');
     photoInput.addEventListener('change', function(){
-      if (photoInput.files && photoInput.files.length) {
-        captionIn.classList.remove('hidden');
-      } else {
-        captionIn.classList.add('hidden');
-      }
+      if (photoInput.files && photoInput.files.length) captionIn.classList.remove('hidden');
+      else captionIn.classList.add('hidden');
     });
   }
-
-  // Message textarea appears only after clicking "Post a message"
   if (showMsgBtn && textForm){
-    textForm.classList.add('hidden'); // hidden on load
+    textForm.classList.add('hidden');
     showMsgBtn.addEventListener('click', function(){
       textForm.classList.remove('hidden');
-      showMsgBtn.style.display = 'none';   // hide the button when form is visible
+      showMsgBtn.style.display = 'none';
       if (msgIn) setTimeout(function(){ msgIn.focus(); }, 0);
     });
   }
 
-  // Submit: photo + caption (JSON/base64, robust cross-origin)
-  if (photoForm) {
-    photoForm.addEventListener('submit', function (e) {
+  // PHOTO submit — JSON/base64 + no-cors
+  if (photoForm){
+    photoForm.addEventListener('submit', function(e){
       e.preventDefault();
-      if (!photoInput.files || !photoInput.files.length) {
-        setText(photoStatus, 'Choose a photo or video.');
-        return;
-      }
+      if (!photoInput.files || !photoInput.files.length) { setText(photoStatus, 'Choose a photo or video.'); return; }
       setText(photoStatus, 'Uploading…');
 
       var file = photoInput.files[0];
@@ -182,27 +118,24 @@
           caption:  captionIn.value || ''
         };
 
-        // We don’t need to read the response; this avoids CORS headaches
         fetch(WEB_APP, {
           method: 'POST',
           mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload)   // no headers → no preflight
         })
         .catch(function(){ /* ignore */ })
-        .finally(function () {
-          setText(photoStatus, 'Thanks! Your post is live (refresh in a moment).');
+        .finally(function(){
+          setText(photoStatus, 'Thanks! Your post is live.');
           photoInput.value = '';
-          if (captionIn) { captionIn.value = ''; captionIn.classList.add('hidden'); }
-          // give Apps Script a moment, then refresh feed
-          setTimeout(loadFeed, 800);
+          if (captionIn){ captionIn.value = ''; captionIn.classList.add('hidden'); }
+          setTimeout(loadFeed, 900);
         });
       };
       reader.readAsDataURL(file);
     });
   }
 
-  // Submit: text-only message (JSON)
+  // TEXT submit — JSON + no-cors
   if (textForm){
     textForm.addEventListener('submit', function(e){
       e.preventDefault();
@@ -211,26 +144,20 @@
       setText(textStatus, 'Posting…');
 
       fetch(WEB_APP + '?action=wg_text', {
-        method:'POST',
-        headers:{ 'Content-Type':'application/json' },
-        body: JSON.stringify({ message: msg })
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({ message: msg })  // no headers
       })
-      .then(function(r){ return r && typeof r.json === 'function' ? r.json() : Promise.resolve(null); })
-      .then(function(){
-        setText(textStatus, 'Your message is live!');
-      })
-      .catch(function(){
-        setText(textStatus, 'Failed to post. Please try again.');
-      })
+      .catch(function(){ /* ignore */ })
       .finally(function(){
-        // reset + hide form + show button again
+        setText(textStatus, 'Your message is live!');
         msgIn.value = '';
         textForm.classList.add('hidden');
         if (showMsgBtn) showMsgBtn.style.display = '';
-        loadFeed();
+        setTimeout(loadFeed, 600);
       });
     });
   }
 
-  loadFeed(); // initial
+  loadFeed();
 })();
