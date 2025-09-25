@@ -85,15 +85,15 @@
     var uploadBtn = document.getElementById('wgUploadBtn');
 
     captionIn.classList.add('hidden');
-    if (uploadBtn) uploadBtn.classList.add('hidden');
+    uploadBtn.classList.add('hidden');
 
     photoInput.addEventListener('change', function(){
       if (photoInput.files && photoInput.files.length) {
         captionIn.classList.remove('hidden');
-        if (uploadBtn) uploadBtn.classList.remove('hidden');
+        uploadBtn.classList.remove('hidden');
       } else {
         captionIn.classList.add('hidden');
-        if (uploadBtn) uploadBtn.classList.add('hidden');
+        uploadBtn.classList.add('hidden');
       }
     });
   }
@@ -137,6 +137,8 @@
           setText(photoStatus, 'Thanks! Your post is live.');
           photoInput.value = '';
           if (captionIn){ captionIn.value = ''; captionIn.classList.add('hidden'); }
+          var uploadBtn = document.getElementById('wgUploadBtn');
+          if (uploadBtn) uploadBtn.classList.add('hidden');
           setTimeout(loadFeed, 900);
         });
       };
