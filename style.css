@@ -371,6 +371,20 @@ button#dlAll.sw-btn-gold{
   background: #fff;
 }
 
+.wg-posts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;  /* two equal columns */
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+/* Responsive fallback: stack them on small screens */
+@media (max-width: 680px) {
+  .wg-posts {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Text-only posts: auto-height box */
 .wg-tile.wg-text{
   aspect-ratio: auto;               /* override any previous value */
