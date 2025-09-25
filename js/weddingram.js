@@ -83,6 +83,7 @@
   // UI toggles
   if (captionIn && photoInput) {
     var uploadBtn = document.getElementById('wgUploadBtn');
+    var chooseLabel = document.getElementById('wgChooseLabel');
 
     captionIn.classList.add('hidden');
     uploadBtn.classList.add('hidden');
@@ -91,9 +92,11 @@
       if (photoInput.files && photoInput.files.length) {
         captionIn.classList.remove('hidden');
         uploadBtn.classList.remove('hidden');
+        chooseLabel.classList.add('hidden');
       } else {
         captionIn.classList.add('hidden');
         uploadBtn.classList.add('hidden');
+        chooseLabel.classList.remove('hidden');
       }
     });
   }
@@ -139,6 +142,7 @@
           if (captionIn){ captionIn.value = ''; captionIn.classList.add('hidden'); }
           var uploadBtn = document.getElementById('wgUploadBtn');
           if (uploadBtn) uploadBtn.classList.add('hidden');
+          if (chooseLabel) chooseLabel.classList.remove('hidden');
           setTimeout(loadFeed, 900);
         });
       };
