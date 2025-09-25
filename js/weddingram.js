@@ -1,17 +1,22 @@
-// weddingram.js — Weddingram feed (CORS-proof submits)
+// weddingram.js — Weddingram feed (single-column + better form toggling)
 (function () {
   var cfg = window.HW_CONFIG || {};
   var WEB_APP = cfg.WEB_APP_URL || '';
   if (!WEB_APP) { console.error('[weddingram] Missing WEB_APP_URL'); return; }
 
+  // Feed
   var grid  = document.getElementById('wgGrid');
   var empty = document.getElementById('wgEmpty');
 
-  var photoForm   = document.getElementById('wgPhotoForm');
-  var photoInput  = document.getElementById('wgPhoto');
-  var captionIn   = document.getElementById('wgCaption');
-  var photoStatus = document.getElementById('wgPhotoStatus');
+  // Photo form
+  var photoForm    = document.getElementById('wgPhotoForm');
+  var photoInput   = document.getElementById('wgPhoto');
+  var captionIn    = document.getElementById('wgCaption');
+  var photoStatus  = document.getElementById('wgPhotoStatus');
+  var photoLabel   = document.getElementById('wgPhotoLabel');   // NEW
+  var uploadBtn    = document.getElementById('wgUploadBtn');    // NEW
 
+  // Text form
   var textForm    = document.getElementById('wgTextForm');
   var msgIn       = document.getElementById('wgMessage');
   var textStatus  = document.getElementById('wgTextStatus');
@@ -19,7 +24,7 @@
 
   function setText(el, msg){ if (el) el.textContent = msg || ''; }
 
-  // JSONP list (no CORS)
+  // JSONP for list
   function jsonp(url, cb){
     var name = 'wg_cb_' + Math.random().toString(36).slice(2);
     window[name] = function(data){ try{ cb(data); } finally{ delete window[name]; } };
@@ -30,7 +35,9 @@
   }
 
   function drivePreviewUrl(entry){
-    if (entry && entry.fileId) return 'https://drive.google.com/uc?export=view&id=' + entry.fileId;
+    if (entry && entry.fileId) {
+      return 'https://drive.google.com/uc?export=view&id=' + entry.fileId;
+    }
     if (entry && entry.webContentLink) {
       var m = entry.webContentLink.match(/[?&]id=([^&]+)/);
       if (m) return 'https://drive.google.com/uc?export=view&id=' + decodeURIComponent(m[1]);
@@ -39,6 +46,7 @@
     return (entry && (entry.url || entry.link)) || '';
   }
 
+  // Render feed (single column)
   function render(items){
     grid.innerHTML = '';
     var list = Array.isArray(items) ? items : [];
@@ -49,13 +57,19 @@
       var tile = document.createElement('div');
       tile.className = 'wg-tile';
 
-      if (entry.type === 'photo'){
-        var img = document.createElement('img');
-        img.src = entry.thumbnailLink || drivePreviewUrl(entry);
-        img.alt = 'Photo';
-        img.loading = 'lazy';
-        img.referrerPolicy = 'no-referrer';
-        tile.appendChild(img);
+      if (entry.type === 'photo' || entry.type === 'video'){
+        var media;
+        if (entry.type === 'video') {
+          media = document.createElement('video');
+          media.controls = true;
+        } else {
+          media = document.createElement('img');
+        }
+        media.src = entry.thumbnailLink || drivePreviewUrl(entry);
+        media.alt = 'Photo';
+        media.loading = 'lazy';
+        media.referrerPolicy = 'no-referrer';
+        tile.appendChild(media);
 
         if (entry.caption){
           var cap = document.createElement('div');
@@ -75,67 +89,95 @@
 
   function loadFeed(){
     jsonp(WEB_APP + '?action=wg_list&ts=' + Date.now(), function(res){
-      if (!res || res.error || res._error) { empty.style.display='block'; setText(empty,'Could not load posts.'); return; }
-      if (Array.isArray(res)) render(res); else if (Array.isArray(res.items)) render(res.items); else render(res);
+      if (!res || res.error || res._error) {
+        empty.style.display = 'block';
+        setText(empty, 'Could not load posts.');
+        return;
+      }
+      render(Array.isArray(res) ? res : (res.items || []));
     });
   }
 
-  // UI toggles
-  if (captionIn && photoInput) {
-    captionIn.classList.add('hidden');
+  /* ---------- UI toggles for photo form ---------- */
+
+  // Start with caption + upload hidden
+  if (captionIn) captionIn.classList.add('hidden');
+  if (uploadBtn) uploadBtn.classList.add('hidden');
+
+  // When a file is selected: show caption + Upload button
+  if (photoInput){
     photoInput.addEventListener('change', function(){
-      if (photoInput.files && photoInput.files.length) captionIn.classList.remove('hidden');
-      else captionIn.classList.add('hidden');
+      var hasFile = photoInput.files && photoInput.files.length > 0;
+      if (captionIn) captionIn.classList.toggle('hidden', !hasFile);
+      if (uploadBtn)  uploadBtn.classList.toggle('hidden', !hasFile);
+
+      // Optional: reflect choice on the label
+      if (photoLabel){
+        if (hasFile) {
+          var f = photoInput.files[0];
+          photoLabel.textContent = '📸 ' + (f && f.name ? f.name : '1 file selected');
+        } else {
+          photoLabel.textContent = '📸 Choose a photo / video';
+        }
+      }
     });
   }
+
+  // Message textarea appears only after clicking "Post a message"
   if (showMsgBtn && textForm){
-    textForm.classList.add('hidden');
+    textForm.classList.add('hidden'); // hidden on load
     showMsgBtn.addEventListener('click', function(){
       textForm.classList.remove('hidden');
       showMsgBtn.style.display = 'none';
-      if (msgIn) setTimeout(function(){ msgIn.focus(); }, 0);
+      msgIn && setTimeout(function(){ msgIn.focus(); }, 0);
     });
   }
 
-  // PHOTO submit — JSON/base64 + no-cors
+  // Submit: photo + caption (multipart)
   if (photoForm){
     photoForm.addEventListener('submit', function(e){
       e.preventDefault();
-      if (!photoInput.files || !photoInput.files.length) { setText(photoStatus, 'Choose a photo or video.'); return; }
-      setText(photoStatus, 'Uploading…');
+      if (!photoInput.files || !photoInput.files.length) {
+        setText(photoStatus, 'Choose a photo or video.');
+        return;
+      }
 
-      var file = photoInput.files[0];
-      var reader = new FileReader();
-      reader.onload = function (ev) {
-        var dataUrl = String(ev.target.result || '');
-        var base64  = dataUrl.split(',')[1] || '';
+      // Disable & show uploading state
+      if (uploadBtn){
+        uploadBtn.disabled = true;
+        uploadBtn.textContent = 'Uploading…';
+      }
+      setText(photoStatus, '');
 
-        var payload = {
-          action:   'wg_post',
-          fileName: file.name,
-          mimeType: file.type || 'application/octet-stream',
-          fileData: base64,
-          caption:  captionIn.value || ''
-        };
+      var fd = new FormData();
+      fd.append('action', 'wg_post');
+      fd.append('caption', captionIn.value || '');
+      fd.append('file', photoInput.files[0]);
 
-        fetch(WEB_APP, {
-          method: 'POST',
-          mode: 'no-cors',
-          body: JSON.stringify(payload)   // no headers → no preflight
-        })
-        .catch(function(){ /* ignore */ })
-        .finally(function(){
+      fetch(WEB_APP, { method:'POST', body: fd })
+        .then(function(r){ return r && typeof r.json === 'function' ? r.json() : Promise.resolve(null); })
+        .then(function(){
           setText(photoStatus, 'Thanks! Your post is live.');
+        })
+        .catch(function(){
+          setText(photoStatus, 'Upload failed. Please try again.');
+        })
+        .finally(function(){
+          // Reset inputs + hide caption & Upload
           photoInput.value = '';
           if (captionIn){ captionIn.value = ''; captionIn.classList.add('hidden'); }
-          setTimeout(loadFeed, 900);
+          if (uploadBtn){
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = 'Upload';
+            uploadBtn.classList.add('hidden');     // hide after upload
+          }
+          if (photoLabel){ photoLabel.textContent = '📸 Choose a photo / video'; }
+          loadFeed();
         });
-      };
-      reader.readAsDataURL(file);
     });
   }
 
-  // TEXT submit — JSON + no-cors
+  // Submit: text-only message (JSON)
   if (textForm){
     textForm.addEventListener('submit', function(e){
       e.preventDefault();
@@ -144,20 +186,25 @@
       setText(textStatus, 'Posting…');
 
       fetch(WEB_APP + '?action=wg_text', {
-        method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify({ message: msg })  // no headers
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify({ message: msg })
       })
-      .catch(function(){ /* ignore */ })
-      .finally(function(){
+      .then(function(r){ return r && typeof r.json === 'function' ? r.json() : Promise.resolve(null); })
+      .then(function(){
         setText(textStatus, 'Your message is live!');
+      })
+      .catch(function(){
+        setText(textStatus, 'Failed to post. Please try again.');
+      })
+      .finally(function(){
         msgIn.value = '';
         textForm.classList.add('hidden');
         if (showMsgBtn) showMsgBtn.style.display = '';
-        setTimeout(loadFeed, 600);
+        loadFeed();
       });
     });
   }
 
-  loadFeed();
+  loadFeed(); // initial
 })();
