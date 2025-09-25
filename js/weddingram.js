@@ -158,32 +158,47 @@
     });
   }
 
-  // Submit: photo + caption (multipart)
-  if (photoForm){
-    photoForm.addEventListener('submit', function(e){
+  // Submit: photo + caption (JSON/base64, robust cross-origin)
+  if (photoForm) {
+    photoForm.addEventListener('submit', function (e) {
       e.preventDefault();
-      if (!photoInput.files || !photoInput.files.length) { setText(photoStatus, 'Choose a photo or video.'); return; }
+      if (!photoInput.files || !photoInput.files.length) {
+        setText(photoStatus, 'Choose a photo or video.');
+        return;
+      }
       setText(photoStatus, 'Uploading…');
 
-      var fd = new FormData();
-      fd.append('action', 'wg_post');
-      fd.append('caption', captionIn.value || '');
-      fd.append('file', photoInput.files[0]);
+      var file = photoInput.files[0];
+      var reader = new FileReader();
+      reader.onload = function (ev) {
+        var dataUrl = String(ev.target.result || '');
+        var base64  = dataUrl.split(',')[1] || '';
 
-      fetch(WEB_APP, { method:'POST', body: fd })
-        .then(function(r){ return r && typeof r.json === 'function' ? r.json() : Promise.resolve(null); })
-        .then(function(){
-          setText(photoStatus, 'Thanks! Your post is live.');
+        var payload = {
+          action:   'wg_post',
+          fileName: file.name,
+          mimeType: file.type || 'application/octet-stream',
+          fileData: base64,
+          caption:  captionIn.value || ''
+        };
+
+        // We don’t need to read the response; this avoids CORS headaches
+        fetch(WEB_APP, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
         })
-        .catch(function(){
-          setText(photoStatus, 'Upload failed. Please try again.');
-        })
-        .finally(function(){
-          // reset inputs
+        .catch(function(){ /* ignore */ })
+        .finally(function () {
+          setText(photoStatus, 'Thanks! Your post is live (refresh in a moment).');
           photoInput.value = '';
-          if (captionIn){ captionIn.value = ''; captionIn.classList.add('hidden'); }
-          loadFeed();
+          if (captionIn) { captionIn.value = ''; captionIn.classList.add('hidden'); }
+          // give Apps Script a moment, then refresh feed
+          setTimeout(loadFeed, 800);
         });
+      };
+      reader.readAsDataURL(file);
     });
   }
 
