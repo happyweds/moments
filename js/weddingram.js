@@ -33,17 +33,26 @@
     document.body.appendChild(s);
   }
 
-  // Build a Drive preview URL that works in <img>
-  function drivePreviewUrl(entry){
-    if (entry && entry.fileId) {
-      return 'https://drive.google.com/uc?export=view&id=' + entry.fileId;
+  // Drive preview helpers
+  function asPreviewUrlFromContent(link){
+    // Converts ...uc?export=download&id=XYZ to ...uc?export=view&id=XYZ
+    if (!link) return '';
+    var m = link.match(/[?&]id=([^&]+)/);
+    if (m) return 'https://drive.google.com/uc?export=view&id=' + decodeURIComponent(m[1]);
+    return link;
+  }
+  function previewSrc(entry){
+    // Prefer backend-provided fields from your updated Apps Script
+    // For images: use thumbnailLink (fast, static), else viewLink
+    if (entry.type === 'photo') {
+      return entry.thumbnailLink || entry.viewLink || asPreviewUrlFromContent(entry.webContentLink);
     }
-    if (entry && entry.webContentLink) {
-      var m = entry.webContentLink.match(/[?&]id=([^&]+)/);
-      if (m) return 'https://drive.google.com/uc?export=view&id=' + decodeURIComponent(m[1]);
-      return entry.webContentLink;
+    // For videos: use viewLink (streamable)
+    if (entry.type === 'video') {
+      return entry.viewLink || asPreviewUrlFromContent(entry.webContentLink);
     }
-    return (entry && (entry.url || entry.link)) || '';
+    // Fallbacks
+    return entry.viewLink || asPreviewUrlFromContent(entry.webContentLink) || '';
   }
 
   // Render feed (single column)
@@ -57,9 +66,16 @@
       var tile = document.createElement('div');
       tile.className = 'wg-tile';
 
-      if (entry.type === 'photo'){
+      // normalize type based on mimeType if present
+      var t = entry.type || '';
+      if (!t && entry.mimeType) {
+        t = entry.mimeType.indexOf('video/') === 0 ? 'video'
+          : entry.mimeType.indexOf('image/') === 0 ? 'photo' : 'text';
+      }
+
+      if (t === 'photo') {
         var img = document.createElement('img');
-        img.src = entry.thumbnailLink || drivePreviewUrl(entry);
+        img.src = previewSrc(entry);
         img.alt = 'Photo';
         img.loading = 'lazy';
         img.referrerPolicy = 'no-referrer';
@@ -71,12 +87,30 @@
           cap.textContent = entry.caption;
           tile.appendChild(cap);
         }
-      } else if (entry.type === 'text'){
+      }
+      else if (t === 'video') {
+        var v = document.createElement('video');
+        v.src = previewSrc(entry);
+        v.controls = true;
+        v.preload = 'metadata';
+        v.style.maxWidth = '100%';
+        v.style.maxHeight = '100%';
+        tile.appendChild(v);
+
+        if (entry.caption){
+          var cap2 = document.createElement('div');
+          cap2.className = 'wg-cap';
+          cap2.textContent = entry.caption;
+          tile.appendChild(cap2);
+        }
+      }
+      else if (t === 'text') {
         tile.classList.add('wg-text');
         var p = document.createElement('p');
         p.textContent = entry.caption || '';
         tile.appendChild(p);
       }
+
       grid.appendChild(tile);
     });
   }
@@ -104,10 +138,8 @@
 
   // Show caption only after a file is picked
   if (captionIn && photoInput) {
-    // Hide caption at start
-    captionIn.classList.add('hidden');
+    captionIn.classList.add('hidden'); // hidden on load
     photoInput.addEventListener('change', function(){
-      // show/hide caption depending on selection
       if (photoInput.files && photoInput.files.length) {
         captionIn.classList.remove('hidden');
       } else {
@@ -118,7 +150,7 @@
 
   // Message textarea appears only after clicking "Post a message"
   if (showMsgBtn && textForm){
-    textForm.classList.add('hidden'); // ensure hidden on load
+    textForm.classList.add('hidden'); // hidden on load
     showMsgBtn.addEventListener('click', function(){
       textForm.classList.remove('hidden');
       showMsgBtn.style.display = 'none';   // hide the button when form is visible
