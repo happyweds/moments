@@ -82,10 +82,19 @@
 
   // UI toggles
   if (captionIn && photoInput) {
+    var uploadBtn = document.getElementById('wgUploadBtn');
+
     captionIn.classList.add('hidden');
+    if (uploadBtn) uploadBtn.classList.add('hidden');
+
     photoInput.addEventListener('change', function(){
-      if (photoInput.files && photoInput.files.length) captionIn.classList.remove('hidden');
-      else captionIn.classList.add('hidden');
+      if (photoInput.files && photoInput.files.length) {
+        captionIn.classList.remove('hidden');
+        if (uploadBtn) uploadBtn.classList.remove('hidden');
+      } else {
+        captionIn.classList.add('hidden');
+        if (uploadBtn) uploadBtn.classList.add('hidden');
+      }
     });
   }
   if (showMsgBtn && textForm){
