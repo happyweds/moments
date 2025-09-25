@@ -339,7 +339,7 @@ button#dlAll.sw-btn-gold{
 .wg-tile{
   position: relative;
   width: 100%;
-  aspect-ratio: 1 / 1;     /* perfect square */
+  /* aspect-ratio: 1 / 1;     perfect square */
   overflow: hidden;
   border-radius: 10px;
   background: #000;
@@ -371,7 +371,7 @@ button#dlAll.sw-btn-gold{
   font-size: 16px;
   color: var(--brown);
 }
-#wgPhoto { display:block; margin: 6px 0 8px; }
+#wgPhoto { display:none; margin: 6px 0 8px; }
 #wgCaption, #wgMessage{
   width: 100%;
   border:1px solid var(--line);
