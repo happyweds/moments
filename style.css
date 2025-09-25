@@ -409,6 +409,7 @@ button#dlAll.sw-btn-gold{
   border-color: var(--gold);
   box-shadow: 0 0 0 3px rgba(212,175,55,.18);
 }
+#wgUploadBtn { margin-top: 10px; }
 .wg-status{ margin-top: 8px; color: var(--muted); font-size: 13px; }
 
 /* Hide helper */
