@@ -411,18 +411,5 @@ button#dlAll.sw-btn-gold{
 }
 .wg-status{ margin-top: 8px; color: var(--muted); font-size: 13px; }
 
-/* Make the label/button use the same font and look good on mobile */
-.wg-block-btn { width: 100%; }
-#wgUploadBtn { margin-top: 10px; }
-
-/* On wider screens, let them size naturally */
-@media (min-width: 640px) {
-  .wg-block-btn { width: auto; }
-  #wgUploadBtn { margin-top: 0; }
-}
-
-/* Ensure label uses the same font as buttons */
-label.sw-btn-gold { font-family: inherit; }
-
 /* Hide helper */
 .hidden { display: none !important; }
