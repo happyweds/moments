@@ -83,7 +83,7 @@
           fileData: base64
         };
 
-        fetch(WEB_APP, {
+        fetch(WEB_APP + '?action=gallery', {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
