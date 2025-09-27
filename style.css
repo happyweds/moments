@@ -376,19 +376,6 @@ button#dlAll.sw-btn-gold{
   grid-template-columns: 1fr 1fr;  /* two equal columns */
   gap: 20px;
   margin-bottom: 24px;
-  position: relative;
-}
-
-/* vertical divider line */
-.wg-posts::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 1px;
-  background: var(--beige); /* your beige color */
-  transform: translateX(-50%);
 }
 
 /* Responsive fallback: stack them on small screens */
