@@ -36,7 +36,7 @@
   body.smart .sw-logo{ letter-spacing:.5px; color:var(--brown); }
   
   body.smart .sw-hero{ padding:56px 0 24px; text-align:center; }
-  .couple-names{ font-family:"Playfair Display", serif; font-weight:700; font-size:48px; margin:12px 0; color:var(--brown); }
+  .couple-names{ font-family:"Playfair Display", serif; font-weight:700; font-size:48px; margin:12px 0; color:var(--brown); letter-spacing: 1px;}
   .couple-names .ampersand {
     background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
     background-clip: text;          /* Standard property */
@@ -52,7 +52,7 @@
   .sw-hero .sw-eyebrow {
     font-family: "Playfair Display", serif;
     font-weight: 600;
-    font-size: 28px;
+    font-size: 20px;
     color: var(--brown);
     margin: 8px 0 20px 0;
     letter-spacing: 0.5px;
