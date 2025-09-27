@@ -431,6 +431,7 @@ button#dlAll.sw-btn-gold{
   margin-top: 12px;
   resize: vertical;
   min-height: 60px;
+  text-align: center;
 }
 #wgCaption:focus, #wgMessage:focus{
   border-color: var(--gold);
@@ -441,3 +442,46 @@ button#dlAll.sw-btn-gold{
 
 /* Hide helper */
 .hidden { display: none !important; }
+
+/* Center content inside the two forms */
+.wg-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* center horizontally */
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Make form titles centered */
+.wg-form-title {
+  margin-bottom: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Ensure all buttons look consistent */
+.wg-form button,
+label.sw-btn-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+  color: #fff;
+  border: 1px solid var(--gold-dark);
+  border-radius: 999px;     /* full pill style */
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(212,175,55,.35);
+  min-width: 200px;         /* 🔑 consistent width */
+  transition: box-shadow .2s ease;
+}
+
+/* Hover effect */
+.wg-form button:hover,
+label.sw-btn-gold:hover {
+  box-shadow: 0 8px 18px rgba(212,175,55,.45);
+}
