@@ -77,6 +77,7 @@
         var base64  = dataUrl.split(',')[1] || '';  // strip "data:...;base64,"
 
         var payload = {
+          action: 'gallery',
           fileName: file.name,
           mimeType: file.type || 'application/octet-stream',
           fileData: base64
